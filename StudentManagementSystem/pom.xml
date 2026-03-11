@@ -12,7 +12,7 @@
 
     <build>
         <defaultGoal>package</defaultGoal>
-        <finalName>student-management-system-${version}</finalName>
+        <finalName>student-management-system-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
