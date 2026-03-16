@@ -8,13 +8,12 @@ public class Main {
 
     // variables
     private static boolean loop_run = true;
-    private static int choice;
 
     // main program
     public static void main(String[] args) {
         
         // array of students info
-        ArrayList<StudentData> students_list = new ArrayList<StudentData>();
+        ArrayList<StudentData> students_list = new ArrayList<>();
 
         Scanner scan = new Scanner(System.in);
         
@@ -33,6 +32,7 @@ public class Main {
 
             // take input
             System.out.print("Enter your choice: ");
+            int choice;
             try {
                 choice = scan.nextInt();
                 scan.nextLine();
@@ -47,6 +47,10 @@ public class Main {
                 case 1 -> printStudentList(students_list, scan);
                 
                 case 2 -> addStudent(scan, students_list);
+
+                case 3 -> searchStudentByID(students_list, scan, false);
+
+                case 4 -> searchStudentByID(students_list, scan, true);
 
                 case 5 -> loop_run = false;
                 
@@ -66,7 +70,7 @@ public class Main {
             System.out.print("\nPress any key to continue ....");
             scan.nextLine();
         }
-        System.out.println("\033[H\033[2J");
+        System.out.print("\033[H\033[2J");
     }
 
     // this function adds a new student
@@ -87,6 +91,13 @@ public class Main {
                 id = scan.nextInt();
                 scan.nextLine();
                 invalid_input = false;
+                for(StudentData data :  student_list) {
+                    if(data.getId() == id) {
+                        System.out.println("Student with ID " + id + " already exists !");
+                        invalid_input = true;
+                        break;
+                    }
+                }
             } catch(InputMismatchException ime) {
                 scan.nextLine();
                 System.out.println("Invalid input !");
@@ -102,7 +113,7 @@ public class Main {
             try {
                 percentage = scan.nextFloat();
                 scan.nextLine();
-                invalid_input = (percentage >= 0 && percentage <= 100) ? false : true;
+                invalid_input = !(percentage >= 0) || !(percentage <= 100);
                 if(invalid_input) {
                     System.out.println("Invalid input !");
                 }
@@ -117,6 +128,47 @@ public class Main {
         student_list.add(student_info);
 
         clearScreen(false, scan);
+    }
+
+    // this function searches a student or deletes it
+    private static void searchStudentByID(ArrayList<StudentData> list, Scanner scan, boolean delete) {
+        clearScreen(false, scan);
+
+        boolean invalid_input = true;
+
+        int id = 0;
+
+        do {
+            try {
+                System.out.print("Enter student ID: ");
+                id = scan.nextInt();
+                scan.nextLine();
+                invalid_input = (id < 0);
+                if(invalid_input) {
+                    System.out.println("Invalid input !");
+                }
+            } catch (InputMismatchException ime) {
+                System.out.println("Invalid input !");
+                scan.nextLine();
+            }
+        } while(invalid_input);
+
+        for(StudentData student : list) {
+            if(id == student.getId()) {
+                if(delete) {
+                    list.remove(student);
+                    System.out.println("Student with ID " + id + " has been deleted!");
+                } else {
+                    System.out.println("\nName : " + student.getName() + "\nID : " + student.getId() + "\nPercentage: " + student.getPercentage());
+                }
+                clearScreen(true, scan);
+                return;
+            }
+        }
+
+        System.out.println("Student with ID " + id + " not found !");
+
+        clearScreen(true, scan);
     }
 
     // this function prints the list of students
